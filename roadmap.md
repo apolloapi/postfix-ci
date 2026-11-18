@@ -1,0 +1,21 @@
+# Roadmap
+- [x] Add Docs, Compare, Blog and Verify pages and supporting sections; upstream articles remain attributed links, not fabricated scan results
+- [x] Replace the free-pull gate with a bottom lead sidecar after two copy/search actions
+- [x] Deliver first name, last name, email and phone to private Zot issues; browser test confirmed delivery and test issue was closed
+- [x] Connect the sprint booking CTA to Calendly and add adrian@apolloapi.io as an email alternative
+- [x] Lead with migration staffing and add reference-inspired sprint pricing modal
+- [x] Verify the landing page and sprint modal on desktop and mobile
+- [x] Set a proposed paid-pilot fee of $2,500 USD for one application over two weeks
+- [x] Fork rtvkiz/minimal recipes into catalog-recipes/ (MIT attribution)
+- [x] Postfix CI white-label catalog landing page (Minimal-style)
+- [x] 2 free image pulls, then lead form (Postfix REI pattern)
+- [x] 2-week sprint CTA
+- [x] Submit publishing setup PR to github.com/apolloapi/postfix-ci (PR #1; main unchanged)
+- [x] Deliver leads directly to the owner's chosen private GitHub repository instead of browser-only storage
+- [x] Prepare Apollo workflow generator, signatures, and proposed catalog configuration
+- [x] Open draft PR only against apolloapi/postfix-ci
+- [x] Create private postfix-ci-zot configuration repository and draft PR #1
+- [x] Verify workflow syntax, tests, and isolated workspace preparation
+- [ ] Import full Minimal source to Apollo repository — awaits owner-reviewed commit, setup PR merge, and POSTFIX_PR_TOKEN
+- [ ] Live publication and Zot verification — awaits owner approval, keys, server, DNS and deployment decisions
+- [x] Keep Minimal-derived image publishing in postfix-ci; hold architecture and deployment choices for user review

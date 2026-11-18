@@ -1,0 +1,122 @@
+name: Auto-update PR branches
+
+# Keeps auto-merge PRs from stalling on "Update branch".
+#
+# Branch protection on main uses `strict: true` (Require branches to be up to
+# date before merging). When one PR merges, every other open PR falls BEHIND
+# and its auto-merge halts until the branch is updated — GitHub does not click
+# "Update branch" for you. This workflow does: on every push to main it finds
+# open, auto-merge PRs that are BEHIND and updates their branch.
+#
+# CRITICAL: the update MUST be pushed with the GitHub App token, not the
+# default GITHUB_TOKEN. Pushes made by GITHUB_TOKEN do NOT re-trigger required
+# checks (GitHub blocks recursive workflow runs from it), so the `summary`
+# check would never re-run and auto-merge would still stall. The app token
+# (same one update-versions.yml uses) does re-trigger checks.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/30 * * * *'   # safety net for PRs left BEHIND between pushes
+  workflow_dispatch:
+
+# Serialize runs so two rapid main pushes don't issue overlapping updates.
+concurrency:
+  group: auto-update-pr-branches
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Update behind auto-merge PRs
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # Give GitHub a moment to recompute mergeability after the push,
+          # otherwise mergeStateStatus can be UNKNOWN for a few seconds.
+          sleep 10
+
+          # Open, non-draft PRs into main with auto-merge enabled that are
+          # BEHIND base. We deliberately act ONLY on BEHIND:
+          #   - DIRTY   = real conflict; update-branch can't fix it, skip.
+          #   - BLOCKED = failing/pending checks; nothing to do here.
+          #   - CLEAN   = already mergeable; auto-merge will handle it.
+          #   - UNKNOWN = not yet computed; next push/schedule catches it.
+          # Ask per-PR, not in one list query.
+          #
+          # `gh pr list --json mergeStateStatus` can return UNKNOWN indefinitely:
+          # GitHub computes mergeability lazily and a batch query does not
+          # reliably force it. This workflow reported "No behind auto-merge PRs
+          # — nothing to do" on EVERY run while four PRs sat BEHIND with
+          # auto-merge armed for 12+ hours (2026-08-28). It looked healthy
+          # because it always exited 0.
+          #
+          # `gh pr view <n>` forces the computation, so query candidates cheaply
+          # in one list call and then resolve each one individually. Log what
+          # each PR reports, so a future mismatch names itself instead of
+          # silently selecting nothing.
+          mapfile -t candidates < <(
+            gh pr list --repo "$REPO" --base main --state open --limit 100 \
+              --json number,isDraft --jq '.[] | select(.isDraft == false) | .number'
+          )
+
+          # Right after a push to main EVERY PR can still read UNKNOWN even via
+          # `gh pr view` (2026-11-05: all 11 PRs UNKNOWN 10s after #1072 merged,
+          # so nothing was updated and the queue stalled until the throttled
+          # cron fired an hour later). Re-poll UNKNOWN PRs with backoff instead
+          # of treating them as "nothing to do".
+          prs=()
+          pending=("${candidates[@]:-}")
+          for attempt in 1 2 3 4 5 6; do
+            unknown=()
+            for c in "${pending[@]:-}"; do
+              [ -n "$c" ] || continue
+              info=$(gh pr view "$c" --repo "$REPO" \
+                       --json mergeStateStatus,autoMergeRequest \
+                       --jq '"\(.mergeStateStatus) \(.autoMergeRequest != null)"' 2>/dev/null) || {
+                echo "  PR #$c: could not read merge state, skipping"; continue; }
+              st=${info%% *}; am=${info##* }
+              echo "  PR #$c: mergeStateStatus=$st autoMerge=$am (attempt $attempt)"
+              [ "$am" = "true" ] || continue
+              if [ "$st" = "BEHIND" ]; then prs+=("$c")
+              elif [ "$st" = "UNKNOWN" ]; then unknown+=("$c"); fi
+            done
+            [ "${#unknown[@]}" -gt 0 ] || break
+            pending=("${unknown[@]}")
+            [ "$attempt" -lt 6 ] || { echo "::warning::Still UNKNOWN after retries: ${pending[*]}"; break; }
+            sleep $((attempt * 10))
+          done
+
+          if [ "${#prs[@]}" -eq 0 ]; then
+            echo "No behind auto-merge PRs — nothing to do."
+            exit 0
+          fi
+
+          echo "Behind auto-merge PRs: ${prs[*]}"
+          for n in "${prs[@]}"; do
+            echo "::group::Updating branch for PR #$n"
+            # update-branch merges base into the PR head. 202 on success; 422
+            # if it can't (e.g. a conflict raced in). Never fail the whole job
+            # for one PR — log and move on; the next run retries.
+            if gh api --method PUT "repos/$REPO/pulls/$n/update-branch" \
+                 -H "Accept: application/vnd.github+json" >/dev/null; then
+              echo "PR #$n branch update requested."
+            else
+              echo "::warning::Could not update branch for PR #$n (conflict or transient); will retry next run."
+            fi
+            echo "::endgroup::"
+          done

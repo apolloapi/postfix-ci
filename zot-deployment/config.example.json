@@ -1,0 +1,17 @@
+{
+  "distSpecVersion": "1.1.1",
+  "storage": {
+    "rootDirectory": "/var/lib/zot",
+    "dedupe": true
+  },
+  "http": {
+    "address": "127.0.0.1",
+    "port": "5000",
+    "realm": "Postfix CI registry",
+    "auth": {
+      "htpasswd": { "path": "/etc/zot/htpasswd" },
+      "failDelay": 5
+    }
+  },
+  "log": { "level": "info" }
+}
