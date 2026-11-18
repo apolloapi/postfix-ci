@@ -118,26 +118,3 @@
   .grid-bg { background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at top, black 20%, transparent 70%); }
 }
 
-.sprint-modal {
-  --background: oklch(0.965 0.003 300);
-  --foreground: oklch(0.18 0.003 300);
-  --muted-foreground: oklch(0.48 0.005 300);
-  --secondary: oklch(0.995 0 0);
-  --border: oklch(0.86 0.003 300);
-  color: var(--foreground);
-}
-.sprint-modal > div > .bg-card {
-  --foreground: oklch(0.96 0 0);
-  --card: oklch(0.14 0 0);
-  --muted-foreground: oklch(0.7 0 0);
-  --border: oklch(0.32 0 0);
-  color: var(--foreground);
-}
-.migration-art {
-  --border: oklch(0.32 0 0);
-  --muted-foreground: oklch(0.7 0 0);
-  background: var(--card);
-  color: var(--card-foreground);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-}

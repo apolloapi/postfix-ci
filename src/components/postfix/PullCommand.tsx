@@ -2,13 +2,11 @@ import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { imageRef } from "@/lib/catalog";
-import { useCatalogAction } from "./LeadSidecar";
 
 export function PullCommand({ name, tag = "latest" }: { name: string; tag?: string }) {
   const cmd = `docker pull ${imageRef(name)}:${tag}`;
-  const action = useCatalogAction();
   const copy = async () => {
-    try { await navigator.clipboard.writeText(cmd); toast.success("Copied command"); action(); }
+    try { await navigator.clipboard.writeText(cmd); toast.success("Copied command"); }
     catch { toast.error("Could not copy. Select the command to copy it manually."); }
   };
 

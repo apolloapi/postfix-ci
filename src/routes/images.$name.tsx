@@ -1,5 +1,4 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { SprintButton } from "@/components/postfix/SprintOffer";
 import { Shell } from "@/components/postfix/Shell";
 import { PullCommand } from "@/components/postfix/PullCommand";
 import { catalog, imageRef } from "@/lib/catalog";
@@ -51,10 +50,6 @@ function ImagePage() {
               {i.upstream_url && <li><a className="text-primary underline" href={i.upstream_url}>Upstream project</a></li>}
             </ul>
           </div>
-        </div>
-        <div className="mt-8 border-t border-border py-6">
-          <p className="font-semibold">Need hands-on help migrating {i.name} into your application and CI?</p>
-          <SprintButton className="mt-3">View migration sprint →</SprintButton>
         </div>
       </main>
     </Shell>

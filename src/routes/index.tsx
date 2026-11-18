@@ -3,8 +3,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Shell } from "@/components/postfix/Shell";
 import { catalog, imageRef } from "@/lib/catalog";
-import { SprintButton } from "@/components/postfix/SprintOffer";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CatalogSearch } from "@/components/postfix/CatalogSearch";
 import { PullCommand } from "@/components/postfix/PullCommand";
 import { paginateCatalog } from "@/lib/pagination";
@@ -12,10 +11,10 @@ import { paginateCatalog } from "@/lib/pagination";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Postfix CI — Container migration staffing & minimal images" },
-      { name: "description", content: `Founder-led container migration sprints and an open-source catalog of ${catalog.images.length} minimal images. Dockerfile remediation, tested PRs and measured scan results.` },
-      { property: "og:title", content: "Postfix CI — Staff your container migration" },
-      { property: "og:description", content: "Fixed-scope migration support for Dockerfiles and CI. Browse minimal images and discuss a two-week sprint with Apollo API." },
+      { title: "Postfix CI — Hardened minimal container images" },
+      { name: "description", content: `An open-source catalog of ${catalog.images.length} minimal, hardened container images, referenced from upstream rtvkiz/minimal.` },
+      { property: "og:title", content: "Postfix CI — Hardened minimal container images" },
+      { property: "og:description", content: "Browse minimal, hardened container images from the upstream rtvkiz/minimal catalog." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -36,10 +35,9 @@ function Index() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="grid-bg absolute inset-0" />
         <div className="relative mx-auto max-w-6xl px-4 py-16">
-          <p className="font-mono text-xs text-primary">// Postfix CI by Apollo API · open-source · MIT</p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-normal md:text-6xl">Hardened container images.<br />Hands-on migration staffing.</h1>
-          <p className="mt-4 max-w-2xl text-muted-foreground">Missing shells, glibc vs. musl, root assumptions. Staff a focused sprint to migrate your application and CI to minimal images—with tested PRs and measurable results.</p>
-          <div className="mt-6 flex flex-wrap items-center gap-4"><SprintButton size="lg">View migration sprint <ArrowUpRight /></SprintButton><span className="font-mono text-xs text-muted-foreground">Founder-led · 2 weeks · fixed scope</span></div>
+          <p className="font-mono text-xs text-primary">// Postfix CI · open-source · MIT</p>
+          <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-normal md:text-6xl">Hardened container images.<br />Referenced from upstream Minimal.</h1>
+          <p className="mt-4 max-w-2xl text-muted-foreground">Browse the upstream rtvkiz/minimal catalog. Images are pulled directly from ghcr.io/rtvkiz until Postfix CI runs its own build process.</p>
           <div className="mt-8 max-w-2xl"><PullCommand name="python" /></div>
           <div className="mt-10 flex flex-wrap items-baseline justify-between gap-2"><h2 className="text-lg font-semibold">All {catalog.images.length} hardened container images</h2><p className="text-xs text-muted-foreground">Upstream Minimal catalog</p></div>
           <CatalogSearch onSearch={(value) => { setQ(value); setPage(1); }} />
@@ -82,15 +80,10 @@ function Index() {
           ["Are the upstream images free?", "Minimal publishes its images as an open-source project. Postfix CI's paid pilot covers application migration work, not a fee for the upstream image."],
           ["Do I need an account to pull an image?", "Current commands reference upstream Minimal's public registry. The contact form is for migration inquiries; it does not enforce registry access."],
           ["What makes an image hardened?", "Evaluate reduced package surface, runtime permissions and verifiable artifacts. No single label guarantees zero CVEs or application compatibility."],
-          ["How often are images rebuilt?", "Check upstream build history and image timestamps. Apollo-owned publication remains a review-only proposal, not an active rebuild service."],
+          ["How often are images rebuilt?", "Check upstream build history and image timestamps. Postfix CI currently points upstream and does not run its own rebuilds."],
           ["How do these compare with other catalogs?", "Compare matched versions, measured findings, runtime compatibility and support requirements. Postfix CI does not publish a current comparative scan dataset."],
           ["Can I debug an image with no shell?", "Use an available development variant or an external debugging workflow. Validate the recipe and avoid assuming debugging tools exist in production."],
         ].map(([question, answer]) => <details key={question} className="border-b border-border py-4"><summary className="cursor-pointer font-medium">{question}</summary><p className="mt-3 max-w-3xl text-sm text-muted-foreground">{answer}</p></details>)}</section>
-        <section className="mt-12 border-t border-border py-8">
-          <h2 className="text-2xl font-bold">Your application. Your CI. A focused migration.</h2>
-          <p className="mt-2 max-w-2xl text-muted-foreground">From base-image selection to a reviewed migration PR. Agree the scope first, then measure application-image scan results, test coverage, and remaining risks.</p>
-          <SprintButton className="mt-4">View migration sprint <ArrowUpRight /></SprintButton>
-        </section>
       </main>
     </Shell>
   );

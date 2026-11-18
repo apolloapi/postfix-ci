@@ -13,8 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as DocsRouteImport } from './routes/docs'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as ImagesNameRouteImport } from './routes/images.$name'
 
@@ -38,16 +36,6 @@ const DocsRoute = DocsRouteImport.update({
   path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
@@ -64,8 +52,6 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRoute
   '/compare': typeof CompareRoute
   '/docs': typeof DocsRoute
-  '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/images/$name': typeof ImagesNameRoute
 }
@@ -74,8 +60,6 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRoute
   '/compare': typeof CompareRoute
   '/docs': typeof DocsRoute
-  '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/images/$name': typeof ImagesNameRoute
 }
@@ -85,40 +69,20 @@ export interface FileRoutesById {
   '/blog': typeof BlogRoute
   '/compare': typeof CompareRoute
   '/docs': typeof DocsRoute
-  '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/images/$name': typeof ImagesNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/blog'
-    | '/compare'
-    | '/docs'
-    | '/privacy'
-    | '/terms'
-    | '/verify'
-    | '/images/$name'
+  fullPaths: '/' | '/blog' | '/compare' | '/docs' | '/verify' | '/images/$name'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/blog'
-    | '/compare'
-    | '/docs'
-    | '/privacy'
-    | '/terms'
-    | '/verify'
-    | '/images/$name'
+  to: '/' | '/blog' | '/compare' | '/docs' | '/verify' | '/images/$name'
   id:
     | '__root__'
     | '/'
     | '/blog'
     | '/compare'
     | '/docs'
-    | '/privacy'
-    | '/terms'
     | '/verify'
     | '/images/$name'
   fileRoutesById: FileRoutesById
@@ -128,8 +92,6 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRoute
   CompareRoute: typeof CompareRoute
   DocsRoute: typeof DocsRoute
-  PrivacyRoute: typeof PrivacyRoute
-  TermsRoute: typeof TermsRoute
   VerifyRoute: typeof VerifyRoute
   ImagesNameRoute: typeof ImagesNameRoute
 }
@@ -164,20 +126,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/verify': {
       id: '/verify'
       path: '/verify'
@@ -200,8 +148,6 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRoute,
   CompareRoute: CompareRoute,
   DocsRoute: DocsRoute,
-  PrivacyRoute: PrivacyRoute,
-  TermsRoute: TermsRoute,
   VerifyRoute: VerifyRoute,
   ImagesNameRoute: ImagesNameRoute,
 }
